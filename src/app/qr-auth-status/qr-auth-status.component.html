@@ -1,0 +1,8 @@
+<div class="qr-authentication-dialog">
+    <h2>QR Authentication</h2>
+    <p>Please scan the QR code on your mobile.</p>
+    <canvas #qrCanvas></canvas>
+    <p>Time: {{ timer }}</p>
+    <p>{{ authMessage }}</p>
+    <button (click)="cancelAuth()">Cancel</button>
+</div>

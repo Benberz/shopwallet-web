@@ -1,0 +1,55 @@
+/* src/app/components/transaction-details/transaction-details.component.css */
+.transaction-details-dialog {
+    padding: 2rem;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+.transaction-details {
+    padding: 1em;
+  }
+  
+  .transaction-details p {
+    margin: 0.5em 0;
+  }
+
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .submit-button {
+    background-color: #007bff;
+    color: #fff;
+    transition: background-color 0.3s;
+  }
+
+  .submit-button,
+  .cancel-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .submit-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .cancel-button {
+    background-color: #6c757d;
+    color: #fff;
+    transition: background-color 0.3s;
+  }
+  
+  .cancel-button:hover {
+    background-color: #5a6268;
+  }
+  

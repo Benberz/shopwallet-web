@@ -1,0 +1,25 @@
+<main class="main">
+    <div class="content">
+      <mat-card class="profile-card">
+        <mat-card-title>User Profile</mat-card-title>
+        <mat-divider></mat-divider>
+        <div class="profile-info">
+          <mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%; max-width: 600px; margin: auto;">
+            <ng-container matColumnDef="field">
+              <mat-header-cell *matHeaderCellDef style="padding: 16px;"> Field </mat-header-cell>
+              <mat-cell *matCellDef="let element" style="padding: 16px;"> {{element.field}} </mat-cell>
+            </ng-container>
+  
+            <ng-container matColumnDef="value">
+              <mat-header-cell *matHeaderCellDef style="padding: 16px;"> Value </mat-header-cell>
+              <mat-cell *matCellDef="let element" style="padding: 16px;"> {{element.value}} </mat-cell>
+            </ng-container>
+  
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+        </div>
+        <button mat-raised-button color="primary" (click)="backToDashboard()" style="margin-top: 16px;">Back to Dashboard</button>
+      </mat-card>
+    </div>
+  </main>  

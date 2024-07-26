@@ -1,0 +1,253 @@
+:root {
+    --white-300: #d2cdcb;
+    --gray-900: #212529;
+    --gray-700: #495057;
+    --bright-blue: #007bff;
+    --inter-font: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    color: var(--white-300);
+    font-weight: 400;
+    line-height: 100%;
+    letter-spacing: -0.125rem;
+    margin: 0;
+    font-family: var(--inter-font);
+  }
+  
+  p {
+    margin: 0;
+    color: var(--gray-700);
+  }
+  
+  .dashboard-container {
+    font-family: var(--inter-font);
+    padding: 20px;
+    background-color: #f4f4f4;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(90deg, #FF9D1C, #ac41c7);
+    padding: 10px;
+    color: white;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .header-left {
+    display: flex;
+    align-items: center;
+  }
+  
+  .header .logo {
+    width: 50px;
+    height: 50px;
+    margin-right: 20px;
+  }
+  
+  .logout-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+
+  .logout-button:hover {
+    color:  #FF9D1C;
+    transform: translateY(-5px);
+  }
+
+  .wallet-balance-wrapper {
+    margin-bottom: 5px;
+  }
+  
+  .cards-container {
+    display: flex;
+    display: block;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 20px 0;
+  }
+  
+  .card {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    flex: 1 1 calc(33.333% - 20px);
+    margin: 10px;
+    text-align: left;
+    min-width: 250px;
+    overflow: hidden;
+    position: relative;
+    color: #fff;
+  }
+  
+  .card-content {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  
+  .card h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+  }
+  
+  .card .provider,
+  .card .user,
+  .card .card-number,
+  .card .balance {
+    font-size: 1em;
+    margin: 0.5em 0;
+  }
+  
+  .credit-card {
+    background: url(/assets/images/credit.png) no-repeat center center;
+    background-size: cover;
+  }
+  
+  .debit-card {
+    background: url(/assets/images/debit.png) no-repeat center center;
+    background-size: cover;
+  }
+  
+  .topup-card {
+    background: url(/assets/images/topup.png) no-repeat center center;
+    background-size: cover;
+    height: 100px;
+}
+  
+  .actions-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .wallet-id {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.wallet-id i {
+    margin-right: 5px;
+}
+
+.name {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: lighter;
+}
+
+.name i {
+    margin-right: 5px;
+}
+
+.created {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.created i {
+    margin-right: 5px;
+}
+
+.status {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    color: #d61e1eb3;
+}
+
+.status i {
+    margin-right: 5px;
+}
+  
+  .action-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 32%;
+    padding: 10px;
+    background: linear-gradient(120deg, #FF9D1C, #ac41c7);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-right: 10px; /* Add space between buttons */
+  }
+  .action-button:hover {
+    background: linear-gradient(120deg,#ac41c7, #FF9D1C);
+    transform: translateY(-7px);
+  }
+  
+  .action-button:last-child {
+    margin-right: 0; /* Remove margin for the last button */
+  }
+  
+  .action-button i {
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+  
+  .action-button span {
+    font-size: 14px;
+  }
+  
+  .footer {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(230deg, #d0831e, #9749abe4);
+    border-radius: 8px;
+    margin-top: 20px;
+  }
+
+  .footer .copyright {
+    font-size: 12px;
+    color: var(--white-300);
+    margin-top: 10px;
+    display: block;
+}
+  
+  @media screen and (max-width: 768px) {
+    .cards-container {
+      flex-direction: column;
+    }
+  
+    .card {
+      flex: 1 1 100%;
+    }
+  
+    .actions-container {
+      flex-direction: column;
+    }
+  
+    .action-button {
+      flex: 1 1 100%;
+    }
+  }

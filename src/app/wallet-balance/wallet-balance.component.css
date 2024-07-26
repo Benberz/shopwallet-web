@@ -1,0 +1,24 @@
+.wallet-balance-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #ff7e5f, #feb47b);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .balance-info {
+    flex: 1;
+    text-align: left;
+    color: #fff;
+  }
+  
+  .toggle-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+  }
+  

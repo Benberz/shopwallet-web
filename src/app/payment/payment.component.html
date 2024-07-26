@@ -1,0 +1,18 @@
+<div class="payment-dialog" @fadeIn>
+<p>Payment <span class="span-text">(for)</span></p>
+<mat-tab-group>
+  <mat-tab label="Credit Card">
+    <ng-template mat-tab-label>
+      <span class="my-custom-class">Credit Card</span>
+  </ng-template>
+    <app-credit-card-tab></app-credit-card-tab>
+  </mat-tab>
+  <mat-tab label="Telcos">
+    <ng-template mat-tab-label>
+      <span class="my-custom-class">Telcos</span>
+  </ng-template>
+    <app-telcos-tab></app-telcos-tab>
+  </mat-tab>
+</mat-tab-group>
+<button class="cancel-button" (click)="closeDialog()">Close</button>
+</div>

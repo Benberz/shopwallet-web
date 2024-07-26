@@ -1,0 +1,34 @@
+<div class="transfer-dialog">
+    <p>Transfer <span class="span-text">(to)</span></p>
+    <form [formGroup]="transferForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="walletId">Recipient Wallet ID</label>
+        <input type="text" id="walletId" formControlName="walletId" class="form-control" placeholder="Enter Wallet ID (10 digits)" />
+        <div *ngIf="transferForm.get('walletId')?.hasError('notFound')">Wallet ID not found</div>
+      </div>
+  
+      <div class="form-group">
+        <label for="name">Recipient Name </label>
+        <input type="text" id="name" formControlName="recipientName" class="form-control" placeholder="Wallet Holder Name (auto completed)" />
+      </div>
+  
+      <div class="form-group">
+        <label for="amount">Amount</label>
+        <input type="number" id="amount" formControlName="transferAmount" class="form-control" placeholder="Enter amount" />
+      </div>
+  
+      <div class="button-group">
+        <button class="cancel-button" type="button" (click)="closeDialog()">Cancel</button>
+        <button class="submit-button" type="submit" [disabled]="isProcessing || transferForm.invalid">Submit</button>
+      </div>
+      <mat-progress-bar 
+      *ngIf="isProcessing" 
+      mode="indeterminate" 
+      color="primary"
+    ></mat-progress-bar>
+      <div *ngIf="isProcessing" class="progress-bar">
+        Processing your transaction...
+      </div>
+    </form>
+  </div>
+  

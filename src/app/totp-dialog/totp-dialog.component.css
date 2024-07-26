@@ -1,0 +1,14 @@
+.mat-dialog-container {
+    background-color: white;
+    border-radius: 8px;
+    max-width: 450px;
+  }
+  
+  button.mat-button {
+    border-radius: 20px;
+  }
+  
+  button.mat-button:hover {
+    background-color: gray;
+    color: black;
+  }

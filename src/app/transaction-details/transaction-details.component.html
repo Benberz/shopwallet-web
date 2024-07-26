@@ -1,0 +1,15 @@
+<!-- src/app/components/transaction-details/transaction-details.component.html -->
+<div class="transaction-details-dialog">
+  <p>Transaction Details</p>
+  <div class="transaction-details">
+    <p><strong>Date:</strong> {{ data.date }}</p>
+    <p><strong>Description:</strong> {{ data.description }}</p>
+    <p><strong>Amount:</strong> {{ data.amount | currency: 'NGN '}}</p>
+    <p><strong>Type:</strong> {{ data.type }}</p>
+  </div>
+
+  <div class="button-group">
+    <button class="cancel-button" type="button" (click)="closeDialog()">Close</button>
+  </div>
+
+</div>

@@ -1,0 +1,70 @@
+<div class="dashboard-container">
+  <header class="header">
+      <div class="header-left">
+          <img [src]="'assets/images/shopwalletlogo.svg'" alt="shopwallet logo" class="logo">
+          <h1>ShopWallet</h1>
+      </div>
+      <div class="header-right">
+          <button class="logout-button" (click)="navigateToProfile()">
+              <i class="fas fa-user" aria-label="Profile"></i>
+          </button>
+          <button class="logout-button">
+              <i class="fas fa-sign-out-alt" aria-label="Log out" (click)="logout()"></i>
+          </button>
+      </div>
+  </header>
+
+  <div class="wallet-balance-wrapper">
+      <app-wallet-balance></app-wallet-balance>
+  </div>
+
+  <div class="cards-container">
+      <div class="card topup-card" *ngIf="userProfile">
+          <div class="card-content">
+              <div class="wallet-id">
+                  <i class="fas fa-wallet"></i>
+                  <p>{{ formatWalletId(userProfile.walletId) }}</p>
+              </div>
+              <div class="name">
+                  <i class="fas fa-user"></i>
+                  <p>{{ userProfile.name }}</p>
+              </div>
+              <div class="created">
+                  <i class="fas fa-calendar-alt"></i>
+                  <p>{{ formattedCreatedDate  }}</p>
+              </div>
+              <div class="status">
+                  <i class="fas fa-info-circle"></i>
+                  <p>{{ userProfile.status }}</p>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <div class="actions-container">
+      <div class="action-button wallet" (click)="openWalletTopUp()">
+          <i class="fas fa-wallet"></i>
+          <span>Fund</span>
+      </div>
+      <div class="action-button transfer" (click)="openTransferDialog()">
+        <i class="fas fa-exchange-alt"></i>
+        <span>Send</span>
+    </div>
+      <div class="action-button payment" (click)="openRecieveDialog()">
+          <i class="fas fa-credit-card"></i>
+          <span>Recieve</span>
+      </div>
+      <div class="action-button payment" (click)="openPaymentDialog()">
+        <i class="fas fa-credit-card"></i>
+        <span>Mobile Reload</span>
+      </div>
+      
+  </div>
+
+  <footer class="footer">
+      <app-transaction-history></app-transaction-history>
+      <span class="copyright">
+        © {{ currentYear }} ShopWallet. All rights reserved. "Empowering Your Financial Freedom"
+    </span>
+  </footer>
+</div>

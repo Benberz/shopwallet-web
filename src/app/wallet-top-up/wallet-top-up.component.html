@@ -1,0 +1,42 @@
+<div class="transfer-dialog wallet-dialog">
+  <h3>Wallet Top Up</h3>
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="amount">Amount</label>
+      <input 
+        type="number" 
+        id="amount" 
+        class="form-control" 
+        placeholder="Enter amount" 
+        [(ngModel)]="amountInput" 
+        name="amount" 
+        [disabled]="!isBankLinked || isProcessing"
+        required 
+      />
+    </div>
+    <div class="button-group">
+      <button 
+        type="button" 
+        class="cancel-button" 
+        (click)="closeDialog()"
+      >
+        Cancel
+      </button>
+      <button 
+        type="submit" 
+        class="submit-button" 
+        [disabled]="!isBankLinked || isProcessing"
+      >
+        Submit
+      </button>
+    </div>
+  </form>
+  <mat-progress-bar 
+    *ngIf="isProcessing" 
+    mode="indeterminate" 
+    color="primary"
+  ></mat-progress-bar>
+  <div *ngIf="isProcessing" class="processing-text">
+    Processing your transaction...
+  </div>
+</div>

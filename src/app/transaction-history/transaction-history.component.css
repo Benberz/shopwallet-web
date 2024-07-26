@@ -1,0 +1,49 @@
+/* src/app/components/transaction-history/transaction-history.component.css */
+.transaction-history {
+    background: #fff;
+    padding: 1em;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .transaction-history li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5em;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .transaction-history li:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .transaction-history h3 {
+    margin-bottom: 1em;
+  }
+  
+  .transaction-history ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .transaction-history li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5em 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .transaction-history li:last-child {
+    border-bottom: none;
+  }
+  
+  .transaction-history .credit {
+    color: green;
+  }
+  
+  .transaction-history .debit {
+    color: red;
+  }
+  

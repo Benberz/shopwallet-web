@@ -1,0 +1,13 @@
+<div class="receive-dialog" *ngIf="!isLoading">
+    <div *ngIf="walletId">
+      <h2>Your Wallet ID</h2>
+      <p class="wallet-id">{{ walletId }}</p>
+      <img [src]="qrCodeDataUrl" alt="QR Code" *ngIf="qrCodeDataUrl" class="qr-code" />
+    </div>
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    <div class="button-group">
+      <button class="cancel-button" (click)="cancel()">Cancel</button>
+    </div>
+  </div>
+  <div *ngIf="isLoading">Loading...</div>
+  

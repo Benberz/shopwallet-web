@@ -1,0 +1,16 @@
+<!-- src/app/components/transaction-history/transaction-history.component.html -->
+<div class="transaction-history">
+  <h3>Recent Transactions</h3>
+  <ng-container *ngIf="transactions && transactions.length; else noTransactions">
+    <ul>
+      <li *ngFor="let transaction of transactions" (click)="openTransactionDetails(transaction)">
+        <span>{{ transaction.date | date: 'dd-MM-yy HH:mm EEEE' }}</span>
+        <span>{{ transaction.description }}</span>
+        <span [class]="transaction.type">{{ transaction.amount | currency:'NGN':'symbol-narrow':'1.2-2' }}</span>
+      </li>
+    </ul>
+  </ng-container>
+  <ng-template #noTransactions>
+    <p>There is no transaction made recently</p>
+  </ng-template>
+</div>

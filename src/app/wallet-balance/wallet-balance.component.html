@@ -1,0 +1,8 @@
+<div class="wallet-balance-container">
+    <div class="balance-info">
+      <p><strong>Balance:</strong> {{ isVisible ? formattedBalance : '*******' }}</p>
+    </div>
+    <button class="toggle-button" (click)="toggleVisibility()">
+      <i [class]="isVisible ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+    </button>
+  </div>

@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>Link Your Bank Account to Your Wallet</h2>
+<div mat-dialog-content>
+  <form>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-icon matPrefix>account_balance</mat-icon>
+      <input type="text" matInput [formControl]="bankNameControl" placeholder="Bank Name" required [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let bank of filteredBanks | async" [value]="bank">
+          {{ bank }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-icon matPrefix>numbers</mat-icon>
+      <input matInput [(ngModel)]="bankAccountNumber" name="bankAccountNumber" placeholder="Account Number" required>
+    </mat-form-field>
+  </form>
+  <mat-progress-bar *ngIf="isLinking" mode="indeterminate"></mat-progress-bar>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onLinkBank()">Link to Wallet</button>
+</div>
