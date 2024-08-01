@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, doc, getDoc, getDocs, limit, orderBy, query, runTransaction, where } from '@angular/fire/firestore';
-import { Observable, from } from 'rxjs';
+import { Firestore, QuerySnapshot, collection, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query, runTransaction, where } from '@angular/fire/firestore';
+import { Observable, Subject, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -33,15 +33,27 @@ export class ReceiveService {
       orderBy('datetime', 'desc'),
       limit(1)
     );
-    return from(getDocs(transactionQuery));
+
+    return new Observable(observer => {
+      onSnapshot(transactionQuery, (snapshot: QuerySnapshot) => {
+        snapshot.forEach(doc => {
+          const data = { id: doc.id, ...doc.data() };
+          observer.next(data);
+        });
+      }, error => {
+        observer.error(error);
+      });
+    });
   }
 
   updateTransactionStatus(docId: string, status: string): Observable<void> {
+    const currentDatetime = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const transactionRef = doc(this.firestore, 'itu_challenge_wallet_transactions', docId);
+    
     return from(runTransaction(this.firestore, async (transaction) => {
       const transactionDoc = await transaction.get(transactionRef);
       if (transactionDoc.exists()) {
-        transaction.update(transactionRef, { status: status });
+        transaction.update(transactionRef, { status: status, modified: currentDatetime });
       }
     }));
   }

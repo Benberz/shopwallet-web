@@ -110,6 +110,32 @@ body, html {
     gap: 1.25rem;
   }
 
+  .back-button {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: var(--red-to-pink-to-purple-horizontal-gradient);
+    --pill-accent: var(--bright-blue);
+    color: var(--pill-accent);
+    padding-inline: 0.75rem;
+    padding-block: 0.375rem;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-family: var(--inter-font);
+    font-size: 1.875rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.6rem;
+    letter-spacing: -0.00875rem;
+    text-decoration: none;
+  }
+  
+  .back-button:hover {
+    background-color: color-mix(in srgb, var(--pill-accent) 15%, transparent);
+  }
+
   .pill {
     display: flex;
     align-items: center;

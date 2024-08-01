@@ -5,6 +5,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { SuccessComponent } from './success/success.component';
+import { AuthGuard } from './services/auth.guard';
 
 export const routes: Routes = [
     {
@@ -20,17 +21,20 @@ export const routes: Routes = [
     {
         title: 'Dashboard',
         path: 'dashboard',
-        component: DashboardComponent
+        component: DashboardComponent,
+        canActivate: [AuthGuard]
     },
     {
         title: 'Profile',
         path: 'profile',
-        component: UserProfileComponent
+        component: UserProfileComponent, 
+        canActivate: [AuthGuard]
     },
     {
         title: 'Success',
         path: 'success',
-        component: SuccessComponent
+        component: SuccessComponent,
+        canActivate: [AuthGuard]
     },
     {
         title: 'Not Found',

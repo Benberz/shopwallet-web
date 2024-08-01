@@ -2,6 +2,7 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../../environments/environments';
+import { UserService } from './user.service';
 
 declare var Guardian: any;
 
@@ -13,7 +14,8 @@ export class BsaService {
   private bsa: any;
   private bsaReady: Promise<void>;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private userService: UserService) {
     if (isPlatformBrowser(this.platformId)) {
       this.bsaReady = this.loadScript('https://developers.fnsvalue.co.kr/bsa-js/bsa_challenge.js').then(() => {
         this.bsa = new Guardian(environment.clientKey);
@@ -40,6 +42,20 @@ export class BsaService {
     return this.bsaReady;
   }
 
+  isAuthenticated(): boolean {
+    if (isPlatformBrowser(this.platformId)) {
+      const accessToken = localStorage.getItem('accessToken');
+      return !!accessToken;
+    }
+    return false;
+  }
+
+  logout(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+    }
+  }
 
   // BSA auth with UserID
   requestAuth(userKey: string): Promise<{ accessToken: string; refreshToken: string; }> {
@@ -48,6 +64,9 @@ export class BsaService {
         console.log('onSuccess');
         console.log('accessToken : ', result.accessToken);
         console.log('refreshToken : ', result.refreshToken);
+        localStorage.setItem('accessToken', result.accessToken);
+        localStorage.setItem('refreshToken', result.refreshToken);
+        // this.userService.queryHolderRefId(userKey);
         resolve(result);
       }, (errorCode: any, errorMsg: string) => {
         console.log('onError');
@@ -130,7 +149,7 @@ export class BsaService {
     });
   }
 
-  // set atuh timer, check valid BSA auth time.
+  // set auth timer, check valid BSA auth time.
   setAuthTimer(onCallback: (time: any) => void): void {
     this.bsa.setAuthTimer((time: string | number) => {
       console.log('onTime');
@@ -157,6 +176,9 @@ export class BsaService {
         console.log('onSuccess');
         console.log('accessToken : ', result.accessToken);
         console.log('refreshToken : ', result.refreshToken);
+
+        localStorage.setItem('accessToken', result.accessToken);
+        localStorage.setItem('refreshToken', result.refreshToken);
         successCallback(result);
       }, (errorCode: number, errorMsg: any) => {
         console.log('onError');
@@ -228,6 +250,8 @@ export class BsaService {
       console.log('onSuccess');
       console.log('accessToken : ', result.accessToken);
       console.log('refreshToken : ', result.refreshToken);
+      localStorage.setItem('accessToken', result.accessToken);
+      localStorage.setItem('refreshToken', result.refreshToken);
       successCallback(result);
     }, (errorCode: number, errorMsg: any) => {
       console.log('onError');
@@ -350,73 +374,78 @@ export class BsaService {
     }
 
     // Request TOTP auth
-    requestTotpCallback(userKey: string, totpCode: string, successCallback: (result: { accessToken: string; refreshToken: string; }) => void, errorCallback: (errorCode: number, errorMsg: string) => void): void {
-      this.bsa.requestTotpCallback(userKey, totpCode, (result: { accessToken: any; refreshToken: any; }) => {
-        console.log('onSuccess');
-        console.log('accessToken : ', result.accessToken);
-        console.log('refreshToken : ', result.refreshToken);
-        successCallback(result);
-      }, (errorCode: number, errorMsg: any) => {
-        console.log('onError');
-        console.log('errorCode : ', errorCode);
-        console.log('errorMsg : ', errorMsg);
+    requestTotpCallback(userKey: string, totpCode: string, successCallback: (result: { accessToken: string; refreshToken: string; }) => void, errorCallback: (errorCode: number | null, errorMsg: string | null) => void): void {
+      this.ensureBsaReady().then(() => {
+        this.bsa.requestTotpCallback(userKey, totpCode, (result: { accessToken: any; refreshToken: any; }) => {
+          console.log('onSuccess');
+          console.log('accessToken : ', result.accessToken);
+          console.log('refreshToken : ', result.refreshToken);
+          localStorage.setItem('accessToken', result.accessToken);
+          localStorage.setItem('refreshToken', result.refreshToken);
+          successCallback(result);
+        }, (errorCode: number | null, errorMsg: any) => {
+          console.log('onError');
+          console.log('errorCode : ', errorCode);
+          console.log('errorMsg : ', errorMsg);
   
-        let errorMessage = 'Authentication failed. ';
-        switch (errorCode) {
-          case 2000:
-            errorMessage += 'Invalid client key. Please check the client key.';
-            break;
-          case 2008:
-            errorMessage += 'Unregistered user. Please check BSA sign in status.';
-            break;
-          case 3005:
-            errorMessage += 'TOTP code verification failure. Make request for re-verification.';
-            break;
-          case 3201:
-            errorMessage += 'Not properly linked client. Please link your client website in BSA settings.';
-            break;
-          case 3301:
-            errorMessage += 'Unspecified client login type. Contact support to resolve this issue.';
-            break;
-          case 5001:
-            errorMessage += 'Authentication timeout. Please try requesting authentication again.';
-            break;
-          case 5005:
-            errorMessage += 'Unauthorized user. Contact support to resolve this issue.';
-            break;
-          case 5006:
-            errorMessage += 'Temporarily suspended user. Contact support to resolve this issue.';
-            break;
-          case 5007:
-            errorMessage += 'Permanently suspended user. Contact support to resolve this issue.';
-            break;
-          case 5008:
-            errorMessage += 'Withdrawn user. User accounts can be reactivated within a certain period.';
-            break;
-          case 2010:
-            errorMessage += 'User authentication in-progress. Cancel previous authentication and request a new one.';
-            break;
-          case 5011:
-            errorMessage += 'User authentication canceled. Please request re-authentication.';
-            break;
-          case 5015:
-            errorMessage += 'Failed to create channel. Check the parameters.';
-            break;
-          case 5017:
-            errorMessage += 'Failed to send push notification. Issues with FCM(Firebase Cloud Messaging). Contact support if the problem persists.';
-            break;
-          case 5022:
-            errorMessage += 'Verification failure. Node verification failed. Contact support if the problem persists.';
-            break;
-          case 5026:
-            errorMessage += 'Exceeded daily limit for TOTP authentication attempt. Make request for authentication with another method.';
-            break;
-          default:
-            errorMessage += 'Unknown error occurred. Please try again later.';
-        }
-        errorCallback(errorCode, errorMessage);
+          let errorMessage = 'Authentication failed. ';
+          switch (errorCode) {
+            case 2000:
+              errorMessage += 'Invalid client key. Please check the client key.';
+              break;
+            case 2008:
+              errorMessage += 'Unregistered user. Please check BSA sign in status.';
+              break;
+            case 3005:
+              errorMessage += 'TOTP code verification failure. Make request for re-verification.';
+              break;
+            case 3201:
+              errorMessage += 'Not properly linked client. Please link your client website in BSA settings.';
+              break;
+            case 3301:
+              errorMessage += 'Unspecified client login type. Contact support to resolve this issue.';
+              break;
+            case 5001:
+              errorMessage += 'Authentication timeout. Please try requesting authentication again.';
+              break;
+            case 5005:
+              errorMessage += 'Unauthorized user. Contact support to resolve this issue.';
+              break;
+            case 5006:
+              errorMessage += 'Temporarily suspended user. Contact support to resolve this issue.';
+              break;
+            case 5007:
+              errorMessage += 'Permanently suspended user. Contact support to resolve this issue.';
+              break;
+            case 5008:
+              errorMessage += 'Withdrawn user. User accounts can be reactivated within a certain period.';
+              break;
+            case 2010:
+              errorMessage += 'User authentication in-progress. Cancel previous authentication and request a new one.';
+              break;
+            case 5011:
+              errorMessage += 'User authentication canceled. Please request re-authentication.';
+              break;
+            case 5015:
+              errorMessage += 'Failed to create channel. Check the parameters.';
+              break;
+            case 5017:
+              errorMessage += 'Failed to send push notification. Issues with FCM(Firebase Cloud Messaging). Contact support if the problem persists.';
+              break;
+            case 5022:
+              errorMessage += 'Verification failure. Node verification failed. Contact support if the problem persists.';
+              break;
+            case 5026:
+              errorMessage += 'Exceeded daily limit for TOTP authentication attempt. Make request for authentication with another method.';
+              break;
+            default:
+              errorMessage += 'Unknown error occurred. Please try again later.';
+          }
+          errorCallback(errorCode ?? null, errorMessage);
+        });
+      }).catch((error) => {
+        console.error('BSA not ready:', error);
+        errorCallback(null, 'BSA library not loaded properly.');
       });
     }
-
-    // 
 } // end bsa service class

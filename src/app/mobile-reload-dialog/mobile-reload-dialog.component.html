@@ -1,0 +1,32 @@
+<div class="transfer-dialog">
+    <h3>Mobile Reload</h3>
+    <form [formGroup]="mobileReloadForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number</label>
+        <input type="text" id="phoneNumber" formControlName="phoneNumber" class="form-control" placeholder="Enter Phone Number (11 digits)" />
+        <div *ngIf="mobileReloadForm.get('phoneNumber')?.hasError('required') && mobileReloadForm.get('phoneNumber')?.touched">Phone number is required</div>
+        <div *ngIf="mobileReloadForm.get('phoneNumber')?.hasError('pattern') && mobileReloadForm.get('phoneNumber')?.touched">Invalid phone number format</div>
+      </div>
+  
+      <div class="form-group">
+        <label for="receiverName">Receiver Name</label>
+        <input type="text" id="receiverName" formControlName="receiverName" class="form-control" placeholder="Receiver Name (auto completed)" />
+      </div>
+  
+      <div class="form-group">
+        <label for="creditAmount">Credit Amount</label>
+        <input type="number" id="creditAmount" formControlName="creditAmount" class="form-control" placeholder="Enter amount" />
+        <div *ngIf="mobileReloadForm.get('creditAmount')?.hasError('required') && mobileReloadForm.get('creditAmount')?.touched">Amount is required</div>
+        <div *ngIf="mobileReloadForm.get('creditAmount')?.hasError('min') && mobileReloadForm.get('creditAmount')?.touched">Amount must be at least {{ minAmount }}</div>
+      </div>
+  
+      <div class="button-group">
+        <button type="button" class="cancel-button" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="submit-button" [disabled]="isLoading || mobileReloadForm.invalid">Submit</button>
+      </div>
+  
+      <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="primary"></mat-progress-bar>
+      <div *ngIf="isLoading" class="progress-bar">Processing your transaction...</div>
+    </form>
+  </div>
+  

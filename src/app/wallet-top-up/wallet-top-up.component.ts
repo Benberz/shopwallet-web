@@ -12,6 +12,10 @@ import { BalanceService } from './../services/balance.service';
 import { SecureStorageService } from './../services/secure-storage.service';
 import { BankLinkDialogComponent } from './../bank-link-dialog/bank-link-dialog.component';
 import { StatusDialogComponent } from './../status-dialog/status-dialog.component';
+import { BsaService } from '../services/bsa.service';
+import { UserService } from '../services/user.service';
+import { Subject } from 'rxjs';
+import { AuthTransactionComponent } from '../auth-transaction/auth-transaction.component';
 
 @Component({
   selector: 'app-wallet-top-up',
@@ -27,7 +31,7 @@ import { StatusDialogComponent } from './../status-dialog/status-dialog.componen
   ],
   templateUrl: './wallet-top-up.component.html',
   styleUrls: ['./wallet-top-up.component.css'],
-  providers: [BalanceService, SecureStorageService]
+  providers: [BalanceService, SecureStorageService, UserService,]
 
 })
 export class WalletTopUpComponent implements OnInit {
@@ -38,6 +42,11 @@ export class WalletTopUpComponent implements OnInit {
   linkedBankDocRef!: string;
   walletBalanceDocRef!: string;
   holderRefId!: string;
+  userKey!:string;
+
+  authMessage$: Subject<string> = new Subject();
+  authTimer$: Subject<string | number> = new Subject();
+  authResult$: Subject<any> = new Subject();
 
   constructor(
     private snackBar: MatSnackBar,
@@ -45,19 +54,21 @@ export class WalletTopUpComponent implements OnInit {
     private dialogRef: MatDialogRef<WalletTopUpComponent>,
     private router: Router,
     private holderBankAccount: HolderBankAccountService,
+    private bsaService: BsaService,
     private firestore: BalanceService,
-    private secureStorage: SecureStorageService
-  ) {}
+    private secureStorage: SecureStorageService){}
 
   ngOnInit(): void {
     this.inputData = this.secureStorage.retrieveData('inputData');
-    this.linkedBankDocRef = this.inputData.linkedBankDocRef;
+    this.linkedBankDocRef = this.inputData.linkedBankRef;
     this.walletBalanceDocRef = this.inputData.balanceRefId;
     this.holderRefId = this.inputData.holderRefId;
+    this.userKey = this.inputData.userKey;
 
     console.log('linkedBankDocRef: ' + this.linkedBankDocRef);
     console.log('walletBalanceDocRef: ' + this.walletBalanceDocRef);
     console.log('holderRefId: ' + this.holderRefId);
+    console.log('userKey: ' + this.userKey);
 
     if (!this.inputData.registeredBank) {
       this.snackBar.open('Link your Bank Account to your wallet first.', 'OK');
@@ -71,22 +82,79 @@ export class WalletTopUpComponent implements OnInit {
     if (this.validate(this.amountInput)) {
       const amount = parseFloat(this.amountInput);
       this.isProcessing = true;
-      this.holderBankAccount.getBalance(this.linkedBankDocRef).subscribe(
-        balance => {
-          if (balance >= amount) {
-            this.topUpWallet(amount);
-          } else {
-            this.isProcessing = false;
-            this.showDialog('Transaction Failed', 'Insufficient balance.');
-          }
-        },
-        error => {
-          this.isProcessing = false;
-          this.showDialog('Transaction Failed', error);
-        }
-      );
+      this.authenticateTransaction(amount);
     }
   }
+
+  authenticateTransaction(amount: number) {
+    // Implement your login logic here
+    //const userKey: string = '';
+    console.log('User ID:', this.userKey);
+  
+    // Call BSA service method for authentication
+    this.bsaService.requestAuth(this.userKey)
+      .then((result) => {
+        // On success, navigate to dashboard
+        console.log('Authentication successful');
+        console.log('accessToken:', result.accessToken);
+        console.log('refreshToken:', result.refreshToken);
+  
+        this.authResult$.next(result);
+      })
+      .catch((error) => {
+        // On error, handle and possibly show error message
+        if (error) {
+          console.error('Authentication failed:', error);
+          console.error('Authentication message:', error.errorMessage);
+          //alert('Authentication failed: ' + error.errorMessage);
+        }
+        // You can customize error handling here
+      })
+      .finally(() => {
+        this.bsaService.setAuthMessage((message: string) => {
+          this.authMessage$.next(message);
+        });
+  
+        this.bsaService.setAuthTimer((time: string | number) => {
+          this.authTimer$.next(time);
+        });
+      });
+  
+    // Open the dialog for authentication status
+    const dialogRef = this.dialog.open(AuthTransactionComponent, {
+      width: '100%',
+      maxWidth: '400px',
+      autoFocus: true,
+      disableClose: true,
+      panelClass: 'custom-dialog-container',
+      data: { userKey: this.userKey, authMessage$: this.authMessage$, authTimer$: this.authTimer$, authResult$: this.authResult$ }
+    });
+  
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        console.log('Authentication process completed successfully.');
+        this.holderBankAccount.getBalance(this.linkedBankDocRef).subscribe({
+          next: ((balance) => {
+            if (balance >= amount) {
+              this.topUpWallet(amount);
+            } else {
+              this.isProcessing = false;
+              this.showDialog('Transaction Failed', 'Insufficient balance.');
+            }
+          }),
+          error: error => {
+            this.isProcessing = false;
+            this.showDialog('Transaction Failed', error);
+          }
+      });
+      } else {
+        console.log('Authentication failed, try again or report.');
+        this.isProcessing = false;
+        this.dialogRef.close();
+      }
+    });
+  }
+  
 
   validate(amountStr: string): boolean {
     if (!amountStr) {
@@ -102,52 +170,55 @@ export class WalletTopUpComponent implements OnInit {
   }
 
   topUpWallet(amount: number): void {
-    this.holderBankAccount.topUpWallet(this.walletBalanceDocRef, amount).subscribe(
-      () => {
-        this.updateWalletBalanceInFirestore(amount);
+    this.holderBankAccount.topUpWallet(this.walletBalanceDocRef, amount).subscribe({
+      next: () => {
+        //this.updateWalletBalanceInFirestore(amount);
       },
-      error => {
+      error: error => {
         this.isProcessing = false;
         this.showDialog('Transaction Failed', error);
       }
-    );
+    });
   }
 
   updateWalletBalanceInFirestore(amount: number): void {
-    this.firestore.getBalance(this.walletBalanceDocRef).subscribe(
-      currentBalance => {
+    this.firestore.getBalance(this.walletBalanceDocRef).subscribe({
+      next: currentBalance => {
         const newBalance = currentBalance + amount;
-        this.firestore.updateBalance(this.walletBalanceDocRef, newBalance).subscribe(
-          () => {
+        this.firestore.updateBalance(this.walletBalanceDocRef, newBalance).subscribe({
+          next: () => {
             this.isProcessing = false;
             this.snackBar.open('Balance updated successfully', 'OK');
-            this.showDialog('Transaction Successful', 'Top-up successful.');
+            //this.showDialog('Transaction Successful', 'Top-up successful.');
+            this.router.navigate(['/success']);
             this.recordTransaction(amount);
+            this.dialogRef.close();
           },
-          error => {
+          error: error => {
             this.isProcessing = false;
+            console.error('Failed to update balance', error.errorMessage);
             this.snackBar.open('Failed to update balance', 'OK');
           }
-        );
+        });
       },
-      error => {
+      error: error => {
         this.isProcessing = false;
-        this.snackBar.open('Failed to fetch current balance', 'OK');
+        this.snackBar.open('Failed to fetch current balance. Error: ' + error.errorMessage, 'OK');
       }
-    );
+    });
   }
 
   recordTransaction(amount: number): void {
     const transaction = {
       title: 'Wallet Top Up',
       amount: amount,
-      datetime: new Date().toISOString(),
+      datetime: this.formatDate(new Date()),
       user: this.holderRefId
     };
-    this.firestore.recordTransaction(transaction).subscribe(
-      () => console.log('Transaction recorded successfully'),
-      error => console.error('Failed to record transaction', error)
-    );
+    this.firestore.recordTransaction(transaction).subscribe({
+      next:() => console.log('Transaction recorded successfully'),
+      error: error => console.error('Failed to record transaction', error)
+  });
   }
 
   showDialog(title: string, message: string): void {
@@ -175,5 +246,9 @@ export class WalletTopUpComponent implements OnInit {
 
   closeDialog(): void {
     this.dialogRef.close();
+  }
+
+  private formatDate(date: Date): string {
+    return date.toLocaleString('sv-SE', { timeZone: 'UTC' }).replace('T', ' ');
   }
 }

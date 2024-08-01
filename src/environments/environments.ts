@@ -9,7 +9,8 @@ export const environment = {
       storageBucket: "shopwallet-backoffice.appspot.com",
       messagingSenderId: "603111437362",
       appId: "1:603111437362:web:8a173d4734765ce837782b",
-      measurementId: "G-8WLLBWV410"
+      measurementId: "G-8WLLBWV410",
+      locationId:"europe-west"
     }
   };
   

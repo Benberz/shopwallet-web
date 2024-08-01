@@ -1,11 +1,11 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { BsaService } from '../services/bsa.service';
 import { DialogService } from '../services/dialog.service';
 import { Subject } from 'rxjs';
-import { TotpDialogComponent } from '../totp-dialog/totp-dialog.component';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +13,7 @@ import { TotpDialogComponent } from '../totp-dialog/totp-dialog.component';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   imports: [CommonModule, FormsModule],
-  providers: [BsaService, DialogService]
+  providers: [BsaService, DialogService, UserService]
 })
 export class LoginComponent {
   userId: string = '';
@@ -26,7 +26,10 @@ export class LoginComponent {
 
 
   constructor(private router: Router, 
-    private bsaService: BsaService, private dialogService: DialogService) { }
+    private bsaService: BsaService, 
+    private dialogService: DialogService) { 
+      console.log('(constructor) User ID:', this.userId);
+    }
     
 
   login() {
@@ -54,7 +57,7 @@ export class LoginComponent {
         // On error, handle and possibly show error message
         if (error != null){
           console.error('Authentication failed:', error);
-          console.error('Authentication message:', error.errorMd);
+          console.error('Authentication message:', error.errorMessage);
           //alert('Authentication failed: ' + error.errorMessage);
         }
          // You can customize error handling here
@@ -66,7 +69,6 @@ export class LoginComponent {
 
       this.dialogService.openAuthStatusDialog(this.userId, this.authMessage$, this.authTimer$, this.authResult$);
   }
-
 
   navigateToOtpAuth() {
     this.router.navigate(['/auth/otp-auth']);
@@ -101,11 +103,20 @@ export class LoginComponent {
   }
 
   navigateToQrAuth() {
-    this.dialogService.openQRAuthStatusDialog();
+    if (!this.userId) {
+      alert('Please enter a user ID. First');
+      return;
+    }
+    console.log('(navigateToQrAuth) User ID:', this.userId);
+    this.dialogService.openQRAuthStatusDialog(this.userId);
   }
 
   openOtpAuthDialog() {
-    this.dialogService.openOtpDialog();
+    if (!this.userId) {
+      alert('Please enter a user ID.');
+      return;
+    }
+    this.dialogService.openOtpDialog(this.userId);
   }
 
   openTotpDialog() {

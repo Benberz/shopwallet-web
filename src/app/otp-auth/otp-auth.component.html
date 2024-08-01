@@ -1,9 +1,9 @@
 <div class="otp-authentication-dialog">
     <h3>OTP Authentication</h3>
     <p>Please check the verification code on your mobile.</p>
-    <input type="text" #otpInput maxlength="6" placeholder="OTP CODE">
+    <input type="text" #otpInput maxlength="6" placeholder="OTP CODE" [(ngModel)]="otpCode">
     <p *ngIf="timer">Time remaining: {{ timer }}</p>
-    <p>{{ authStatus }}</p>
+    <p *ngIf="authStatus"> Status: {{ authStatus }}</p>
     <button (click)="verifyOtp(otpInput)">VERIFY</button>
     <button (click)="cancelOtp(otpInput)">CANCEL</button>
   </div>

@@ -24,7 +24,7 @@ export class BalanceService {
         const docSnapshot = await transaction.get(docRef);
         const currentBalance = docSnapshot.data()?.['balance'] || 0.0;
         const updatedBalance = currentBalance + newBalance;
-        transaction.update(docRef, { balance: updatedBalance, modified: new Date().toISOString() });
+        transaction.update(docRef, { balance: updatedBalance, modified: this.formatDate(new Date())});
         return updatedBalance;
       }).then(() => {
         observer.next();
@@ -47,5 +47,9 @@ export class BalanceService {
         console.error('Failed to record transaction', error);
       });
     });
+  }
+
+  private formatDate(date: Date): string {
+    return date.toLocaleString('sv-SE', { timeZone: 'UTC' }).replace('T', ' ');
   }
 }

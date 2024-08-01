@@ -12,6 +12,7 @@ import { QrAuthStatusComponent } from '../qr-auth-status/qr-auth-status.componen
 import { OtpAuthComponent } from '../otp-auth/otp-auth.component';
 import { TotpDialogComponent } from '../totp-dialog/totp-dialog.component';
 import { ReceiveDialogComponent } from '../receive-dialog/receive-dialog.component';
+import { MobileReloadDialogComponent } from '../mobile-reload-dialog/mobile-reload-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,15 @@ import { ReceiveDialogComponent } from '../receive-dialog/receive-dialog.compone
 export class DialogService {
 
   constructor(private dialog: MatDialog) { }
+
+  openMobileReloadDialog() {
+    this.dialog.open(MobileReloadDialogComponent, {
+      width: '100%',
+      maxWidth: '500px', // Ensuring the dialog does not exceed 500px
+      autoFocus: false,
+      panelClass: 'custom-dialog-container'
+    });
+  }
 
   openRecieveDialog() {
     this.dialog.open(ReceiveDialogComponent, {
@@ -101,34 +111,46 @@ export class DialogService {
     });
   }
 
-  openQRAuthStatusDialog() {
+  openQRAuthStatusDialog(userKey: string) {
+    console.log('(openQRAuthStatusDialog) userKey: ', userKey);
     const dialogRef = this.dialog.open(QrAuthStatusComponent, {
       width: '100%',
       maxWidth: '450px',
       autoFocus: true,
       disableClose: true,
       panelClass: 'custom-dialog-container',
-      data: {}
+      data: { userKey }
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        console.log('QR verified successfully:', result);
+      } else {
+        console.log('QR verification failed or dialog was closed.');
+      }
     });
   }
 
-  openOtpDialog() {
+  openOtpDialog(userKey: string) {
     this.dialog.open(OtpAuthComponent, {
       width: '100%',
       maxWidth: '450px',
       autoFocus: true,
       disableClose: true,
       panelClass: 'custom-dialog-container',
+      data: { userKey }
     });
+
   }
 
   openTotpDialog(userKey: string) {
     const dialogRef = this.dialog.open(TotpDialogComponent, {
-      width: '300px',
+      width: '100%',
+      maxWidth: '450px',
       autoFocus: true,
       disableClose: true,
-      
-      data: { userKey: userKey }
+      panelClass: 'custom-dialog-container',
+      data: { userKey }
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {

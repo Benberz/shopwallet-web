@@ -5,6 +5,9 @@ import { UserService } from '../services/user.service';
 import { WalletBalanceComponent } from '../wallet-balance/wallet-balance.component';
 import { Router } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
+import { BsaService } from '../services/bsa.service';
+import { SecureStorageService } from '../services/secure-storage.service';
+import { AccessControlService } from '../services/access-control.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,7 +15,7 @@ import { CommonModule, DatePipe } from '@angular/common';
   imports: [CommonModule, TransactionHistoryComponent, WalletBalanceComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
-  providers: [DatePipe]
+  providers: [DatePipe, UserService, BsaService, DialogService, SecureStorageService]
 })
 export class DashboardComponent implements OnInit {
 
@@ -21,7 +24,10 @@ export class DashboardComponent implements OnInit {
   formattedCreatedDate: string | undefined;
 
   constructor(private dialogService: DialogService,
+    private accessControlService: AccessControlService,
     private userService: UserService,
+    private bsaService: BsaService,
+    private secureStorage: SecureStorageService,
     private router: Router,
     private datePipe: DatePipe
     ) { }
@@ -30,8 +36,14 @@ export class DashboardComponent implements OnInit {
     this.loadUserProfile();
   }
 
+  logout(): void {
+    this.bsaService.logout();
+    this.secureStorage.clearAllData();
+    this.router.navigate(['/login']); // Navigate to the login page or any other page
+  }
+
   loadUserProfile(): void {
-    this.userService.getUserProfile().subscribe(data => {
+    this.userService.getUserProfile().subscribe((data: any) => {
       this.userProfile = data;
       // Format the created date
       this.formattedCreatedDate = this.datePipe.transform(this.userProfile?.created, 'MMMM yyyy') || '';
@@ -50,6 +62,10 @@ export class DashboardComponent implements OnInit {
     this.dialogService.openPaymentDialog();
   }
 
+  openMobileReloadDialog() {
+    this.dialogService.openMobileReloadDialog();
+  }
+
   openTransferDialog() {
     this.dialogService.openTransferDialog();
   }
@@ -64,11 +80,10 @@ export class DashboardComponent implements OnInit {
   }
 
   navigateToProfile() {
-    this.router.navigate(['/profile']);
+    // this.router.navigate(['/profile']);
+    this.accessControlService.authenticateNavigation(() => this.router.navigate(['/profile']));
   }
 
-  logout() {
-    this.router.navigate(['/login']);
-  }
+  
 
 }

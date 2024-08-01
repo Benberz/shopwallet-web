@@ -1,14 +1,67 @@
-.mat-dialog-container {
-    background-color: white;
-    border-radius: 8px;
-    max-width: 450px;
-  }
-  
-  button.mat-button {
-    border-radius: 20px;
-  }
-  
-  button.mat-button:hover {
-    background-color: gray;
-    color: black;
-  }
+/* Center the dialog box */
+.otp-authentication-dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #fffefe;
+  color: #121010;
+  border-radius: 10px;
+}
+
+/* Style the input field */
+.otp-authentication-dialog input {
+  width: calc(100% - 32px);
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  text-align: center;
+}
+
+.otp-authentication-dialog span {
+  font-size: 11px;
+  margin: 10px 10px;
+}
+
+/* Style the buttons */
+.otp-authentication-dialog button {
+  padding: 10px 20px;
+  margin: 5px 5px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.otp-authentication-dialog button:hover {
+  background-color: #ddd;
+}
+
+/* Style the verify button */
+.otp-authentication-dialog button:nth-child(2) {
+  background-color: #007bff;
+  color: white;
+}
+
+.otp-authentication-dialog button:nth-child(2):hover {
+  background-color: #0056b3;
+}
+
+/* Style the cancel button */
+.otp-authentication-dialog button:nth-child(1) {
+  background-color: #dc3545;
+  color: white;
+}
+
+.otp-authentication-dialog button:nth-child(1):hover {
+  background-color: #c82333;
+}
+
+/* Style for timer and status */
+.otp-authentication-dialog p {
+  margin: 10px 0;
+  font-size: 14px;
+}

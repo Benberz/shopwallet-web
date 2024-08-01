@@ -33,7 +33,14 @@ export class UserProfileComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.inputData = this.secureStorage.retrieveData('inputData');
-    await this.loadUserProfile();
+    if (this.inputData) {
+      await this.loadUserProfile();
+    }
+    else {
+      this.router.navigate(['/dashboard']);
+      return;
+    }
+    
   }
 
   async loadUserProfile(): Promise<void> {

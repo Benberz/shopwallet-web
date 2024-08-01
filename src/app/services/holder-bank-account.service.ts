@@ -12,8 +12,8 @@ export class HolderBankAccountService {
 
   getBalance(linkedReferenceId: string): Observable<number> {
     return new Observable(observer => {
-      this.fetchBalanceFromApi().subscribe(
-        fetchedBalance => {
+      this.fetchBalanceFromApi().subscribe({
+        next: fetchedBalance => {
           const currentDatetime = new Date().toISOString();
           const docRef = doc(this.firestore, `itu_challenge_linked_banks/${linkedReferenceId}`);
           console.log('linkedReferenceID: ' + linkedReferenceId);
@@ -28,10 +28,10 @@ export class HolderBankAccountService {
             observer.error(`Failed to update balance: ${error.message}`);
           });
         },
-        error => {
+        error: error => {
           observer.error(`Failed to fetch balance from API: ${error}`);
         }
-      );
+    });
     });
   }
 
@@ -59,7 +59,7 @@ export class HolderBankAccountService {
         const fetchedBalance = 5000.0; // Replace with actual API call logic
         observer.next(fetchedBalance);
         observer.complete();
-      }, 1000); // Simulated network delay
+      }, 4000); // Simulated network delay
     });
   }
 }

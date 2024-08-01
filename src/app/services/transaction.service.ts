@@ -30,7 +30,10 @@ export class TransactionService {
 
   constructor(private firestore: Firestore, private secureStorage: SecureStorageService) { 
     this.inputData = this.secureStorage.retrieveData('inputData');
-    this.receiverId = this.inputData.holderRefId;
+    if (this.inputData) {
+      this.receiverId = this.inputData.holderRefId;
+      console.log('Receiver ID:', this.receiverId);
+    }
   }
 
   getRecentTransactions(): Observable<Transaction[]> {
@@ -52,33 +55,35 @@ export class TransactionService {
     );
 
     return new Observable<Transaction[]>((observer) => {
+      const transactions: Transaction[] = [];
+
       const unsubscribeUser = onSnapshot(userTransactionsQuery, (userQuerySnapshot) => {
-        const transactions: Transaction[] = [];
+        console.log('User Transactions Snapshot:', userQuerySnapshot.size);
         userQuerySnapshot.forEach((doc) => {
           const data = doc.data() as FirestoreTransaction;
           transactions.push(this.mapFirestoreTransactionToTransaction(data));
         });
         observer.next(transactions);
+      }, (error) => {
+        console.error('User Transactions Error:', error);
       });
 
       const unsubscribeReceived = onSnapshot(receivedTransactionsQuery, (receivedQuerySnapshot) => {
-        const transactions: Transaction[] = [];
+        console.log('Received Transactions Snapshot:', receivedQuerySnapshot.size);
         receivedQuerySnapshot.forEach((doc) => {
           const data = doc.data() as FirestoreTransaction;
           transactions.push(this.mapFirestoreTransactionToTransaction(data, 'credit', 'Received'));
         });
         observer.next(transactions);
+      }, (error) => {
+        console.error('Received Transactions Error:', error);
       });
 
       return () => {
         unsubscribeUser();
         unsubscribeReceived();
       };
-    }).pipe(
-      map((transactions: Transaction[]) => {
-        return transactions.sort((a, b) => b.date.getTime() - a.date.getTime()).slice(0, 10);
-      })
-    );
+    });
   }
 
   private mapFirestoreTransactionToTransaction(data: FirestoreTransaction, type: 'credit' | 'debit' = 'debit', description: string = data.title): Transaction {

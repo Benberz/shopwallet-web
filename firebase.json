@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "public": "dist/shopwallet-web",
+    "site": "shopwallet-backoffice",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
